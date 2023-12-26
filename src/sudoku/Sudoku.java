@@ -1,9 +1,11 @@
-JFRA
+
 package sudoku;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.Random;
+import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -23,31 +25,56 @@ import javax.swing.border.LineBorder;
 public class Sudoku extends JFrame {
     public  int current;
     Button[][] buttons = new Button[9][9];
-    int arr[][] = {{4,3,5,2,6,9,7,8,1},
-                   {6,8,2,5,7,1,4,9,3},
-                   {1,9,7,8,3,4,5,6,2},
-                   {8,2,6,1,9,5,3,4,7},
-                   {3,7,4,6,8,2,9,1,5},
-                   {9,5,1,7,4,3,6,2,8},
-                   {5,1,9,3,2,6,8,7,4},
-                   {2,4,8,9,5,7,1,3,6},
-                   {7,6,3,4,1,8,2,5,9}};
+    int arr[][] = new int[9][9];
     
-    boolean displayed[][] = {{false,false,false,true,true,false,true,false,true},
-                            {true,true,false,false,true,false,false,true,false},
-                            {true,true,false,false,false,true,true,false,false},
-                            {true,true,false,true,false,false,false,true,false},
-                            {false,false,true,true,false,true,true,false,false},
-                            {false,true,false,false,false,true,false,true,true},
-                            {false,false,true,true,false,false,false,true,true},
-                            {false,true,false,false,true,false,false,true,true},
-                            {true,false,true,false,true,true,false,false,false}};
-    
+    boolean displayed[][] = new boolean[9][9];
+   
     /**
      * The constructor sets the name of the window number.
      */
     public Sudoku() {
         super("Sudoku");
+    }
+    
+    /**
+     * Generating puzzle based on difficulty.
+     * Calls in PuzzleGenerator class to create puzzle
+     * and asks for user input on difficulty.
+     * Difficulty easy means a lot of the numbers
+     * appear already and hard means a few of them are 
+     * shown at the start. 
+     */
+    public void generate(){
+        PuzzleGenerator puzzle = new PuzzleGenerator();
+        boolean success = puzzle.generate();
+        this.arr = puzzle.returnArray();
+        float percentageOfNumsShown = (float) 0.3;
+        
+        Scanner myObj = new Scanner(System.in); 
+        System.out.println("Enter difficulty: Easy, Medium, Hard");
+        boolean valid = true;
+        
+        do{
+            String difficulty = myObj.nextLine();
+            valid = true;
+            switch(difficulty){
+                case "Easy" : percentageOfNumsShown = (float) 0.3; break;
+                case "Medium" : percentageOfNumsShown = (float) 0.5; break;
+                case "Hard" : percentageOfNumsShown = (float) 0.7; break;
+                default: valid = false;
+            }
+            if(!valid){
+                System.out.println("Error invalid input try again!");
+            }
+        } while(!valid);
+         
+            
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                Random rand = new Random();
+                displayed[i][j] = rand.nextFloat() >= percentageOfNumsShown;
+            }
+        }
     }
     
     /**
@@ -157,6 +184,7 @@ public class Sudoku extends JFrame {
         container.add(numpad);
         this.add(container);
         this.pack();
+   
     }
     
     /**
@@ -165,7 +193,7 @@ public class Sudoku extends JFrame {
      */
     public static void main(String[] args) {   
         Sudoku game = new Sudoku();
-        
+        game.generate();
         // Testing to make sure all correct values are shown
 //        for (int i = 0; i < 9; i++){
 //            for (int j = 0; j  < 9; j++){
