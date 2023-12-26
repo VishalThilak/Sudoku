@@ -1,6 +1,5 @@
 # Sudoku mini game
 
-A sudoku game that can play one game.
 
 ## Description
 
